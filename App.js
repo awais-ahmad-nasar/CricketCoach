@@ -150,6 +150,9 @@ import RecordLiveScreen from './Contents/CricketCoachingSystem/C-LiveRecord';
 import VideoPreviewScreen from './Contents/CricketCoachingSystem/C-VideoPreviou';
 import PerformanceScreen from './Contents/CricketCoachingSystem/C-PlayerPerformanceScreen';
 import ShotDetailScreen from './Contents/CricketCoachingSystem/C-ShotByShot-DetailScreen';
+
+import ViewJoinedSessionScreen from './Contents/CricketCoachingSystem/P-ViewJoinedSessionScreen';
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -206,6 +209,11 @@ const App = () => {
 
         {/* ****** Player Dashbord Screens flow ***** */}
         <Stack.Screen name="Playerdashboard" component={PlayerDashboard} />
+        <Stack.Screen
+          name="ViewJoinedSession"
+          component={ViewJoinedSessionScreen}
+        />
+
         {/* 
         <Stack.Screen
           name="ViewManagersScreen"

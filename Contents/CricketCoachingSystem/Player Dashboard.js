@@ -10,9 +10,9 @@ const PlayerDashboard = ({navigation}) => {
 
       <View style={styles.header}>
         <TouchableOpacity
+          onPress={() => navigation.navigate('LandingScreen')}
           style={styles.backButtonContainer}
-          activeOpacity={0.5}
-          onPress={() => navigation.goBack('SignIn')}>
+          activeOpacity={0.5}>
           <Text style={styles.backButton}>{'< Back'}</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Player Dashboard</Text>
@@ -22,7 +22,7 @@ const PlayerDashboard = ({navigation}) => {
         {/* View Joined Session Button */}
         <TouchableOpacity
           style={styles.menuItem}
-          onPress={() => navigation.navigate('ViewJoinedSessions')}>
+          onPress={() => navigation.navigate('ViewJoinedSession')}>
           <View style={styles.buttonContent}>
             <Image
               source={require('../CricketCoachingSystem/images/joinedSession.png')}
