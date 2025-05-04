@@ -247,6 +247,301 @@
 
 // export default VideoPreviewScreen;
 
+// ................................................................................
+
+// import React, {useState, useEffect, useCallback} from 'react';
+// import {
+//   StyleSheet,
+//   View,
+//   Text,
+//   TouchableOpacity,
+//   Dimensions,
+//   Alert,
+// } from 'react-native';
+// import {ip_adress} from './IP-config';
+// import LinearGradient from 'react-native-linear-gradient';
+// import Video from 'react-native-video';
+// import {launchImageLibrary} from 'react-native-image-picker';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
+
+// const {width, height} = Dimensions.get('window');
+
+// const VideoPreviewScreen = ({navigation, route}) => {
+//   const {sessionId, coachId, videoFile: initialVideoFile, mode} = route.params;
+//   const [videoFile, setVideoFile] = useState(initialVideoFile || null);
+//   const [videoUri, setVideoUri] = useState(initialVideoFile?.uri || null);
+
+//   // Memoize handleSelectVideo to prevent unnecessary re-renders
+//   const handleSelectVideo = useCallback(async () => {
+//     try {
+//       const result = await launchImageLibrary({
+//         mediaType: 'video',
+//         quality: 1,
+//         includeBase64: false,
+//       });
+
+//       if (result.didCancel) {
+//         navigation.goBack();
+//         return;
+//       }
+
+//       if (result.assets && result.assets[0].uri) {
+//         const selectedVideo = result.assets[0];
+//         setVideoUri(selectedVideo.uri);
+//         setVideoFile({
+//           uri: selectedVideo.uri,
+//           type: selectedVideo.type || 'video/mp4',
+//           name: selectedVideo.fileName || `gallery_video_${Date.now()}.mp4`,
+//         });
+//       } else {
+//         Alert.alert('Error', 'No video selected');
+//         navigation.goBack();
+//       }
+//     } catch (error) {
+//       console.error('Gallery selection error:', error);
+//       Alert.alert('Error', 'Failed to select video');
+//       navigation.goBack();
+//     }
+//   }, [navigation]);
+
+//   // Select video from gallery if mode is 'gallery'
+//   useEffect(() => {
+//     if (mode === 'gallery') {
+//       handleSelectVideo();
+//     }
+//   }, [mode, handleSelectVideo]);
+
+//   // Upload video to backend
+//   const uploadVideo = async () => {
+//     if (!videoFile || !sessionId) {
+//       Alert.alert('Error', 'No video or session selected');
+//       return;
+//     }
+
+//     const formData = new FormData();
+//     formData.append('video', {
+//       uri: videoFile.uri,
+//       type: videoFile.type,
+//       name: videoFile.name,
+//     });
+//     formData.append('session_id', sessionId);
+
+//     try {
+//       const response = await fetch(`${ip_adress}/coach/upload-session-video`, {
+//         method: 'POST',
+//         body: formData,
+//         headers: {
+//           'Content-Type': 'multipart/form-data',
+//         },
+//       });
+
+//       const data = await response.json();
+//       if (!response.ok) {
+//         throw new Error(data.message || 'Upload failed');
+//       }
+
+//       Alert.alert('Success', 'Video uploaded successfully', [
+//         {
+//           text: 'OK',
+//           onPress: () => navigation.navigate('ViewArrangedSessions'),
+//         },
+//       ]);
+//     } catch (error) {
+//       console.error('Upload error:', error);
+//       Alert.alert('Error', error.message || 'Failed to upload video');
+//     }
+//   };
+
+//   if (!videoUri) {
+//     return (
+//       <View style={styles.loadingContainer}>
+//         <Text style={styles.loadingText}>Loading Video...</Text>
+//       </View>
+//     );
+//   }
+
+//   return (
+//     <View style={styles.container}>
+//       <LinearGradient
+//         colors={['#90C299', '#DCEDC1']}
+//         style={styles.gradientBackground}
+//       />
+//       {/* Header */}
+//       <View style={styles.header}>
+//         <TouchableOpacity
+//           style={styles.backButtonContainer}
+//           onPress={() => navigation.goBack()}
+//           activeOpacity={0.5}>
+//           <Text style={styles.backButton}>{'< Back'}</Text>
+//         </TouchableOpacity>
+//         <Text style={styles.title}>Preview Video</Text>
+//       </View>
+
+//       {/* Main Content */}
+//       <View style={styles.menu}>
+//         <Video
+//           source={{uri: videoUri}}
+//           style={styles.videoPreview}
+//           controls
+//           resizeMode="contain"
+//           paused={false}
+//         />
+//         {/* <TouchableOpacity
+//           style={styles.menuItem}
+//           onPress={() => navigation.goBack()}>
+//           <View style={styles.buttonContent}>
+//             <Ionicons name="close" size={30} color="#000080" />
+//             <Text style={styles.menuText}>Cancel</Text>
+//           </View>
+//           <Text style={styles.dropdownIcon}>⋮</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.menuItem} onPress={uploadVideo}>
+//           <View style={styles.buttonContent}>
+//             <Ionicons name="cloud-upload" size={30} color="#000080" />
+//             <Text style={styles.menuText}>Upload</Text>
+//           </View>
+//           <Text style={styles.dropdownIcon}>⋮</Text>
+//         </TouchableOpacity> */}
+//         <View style={styles.buttonRow}>
+//           <TouchableOpacity
+//             style={styles.smallButton}
+//             onPress={() => navigation.goBack()}>
+//             <View style={styles.buttonContent}>
+//               <Ionicons name="close" size={24} color="#000080" />
+//               <Text style={styles.menuText}>Cancel</Text>
+//             </View>
+//           </TouchableOpacity>
+
+//           <TouchableOpacity style={styles.smallButton} onPress={uploadVideo}>
+//             <View style={styles.buttonContent}>
+//               <Ionicons name="cloud-upload" size={24} color="#000080" />
+//               <Text style={styles.menuText}>Upload</Text>
+//             </View>
+//           </TouchableOpacity>
+//         </View>
+//       </View>
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     position: 'relative',
+//   },
+//   gradientBackground: {
+//     ...StyleSheet.absoluteFillObject,
+//   },
+//   header: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     backgroundColor: '#E6F2E6',
+//     padding: 30,
+//     borderBottomWidth: 1,
+//     borderBottomColor: '#DFF4DF',
+//     width: '100%',
+//     position: 'absolute',
+//     top: 0,
+//     zIndex: 10,
+//   },
+//   backButtonContainer: {
+//     position: 'absolute',
+//     left: 10,
+//     top: 10,
+//   },
+//   backButton: {
+//     color: '#000080',
+//     fontSize: 13,
+//     fontWeight: '600',
+//     marginTop: 25,
+//   },
+//   title: {
+//     flex: 1,
+//     textAlign: 'center',
+//     color: '#000080',
+//     fontSize: 22,
+//     fontWeight: 'bold',
+//   },
+//   menu: {
+//     marginTop: 100, // Adjusted to fit the video preview above the buttons
+//     padding: 50,
+//     alignItems: 'center',
+//   },
+//   videoPreview: {
+//     width: width * 0.9,
+//     height: height * 0.4, // Adjusted height to fit within the layout
+//     borderRadius: 10,
+//     backgroundColor: '#000',
+//     marginBottom: 20,
+//   },
+//   menuItem: {
+//     backgroundColor: '#90C292',
+//     borderRadius: 10,
+//     padding: 25,
+//     marginBottom: 35,
+//     alignItems: 'center',
+//     shadowColor: '#000',
+//     shadowOffset: {width: 0, height: 2},
+//     shadowOpacity: 0.2,
+//     shadowRadius: 3,
+//     elevation: 5,
+//     position: 'relative',
+//     width: width * 0.8, // Match the button width to RecordSessionScreen
+//   },
+//   buttonContent: {
+//     alignItems: 'center',
+//   },
+//   menuText: {
+//     fontSize: 15,
+//     fontWeight: 'bold',
+//     color: '#000080',
+//     marginTop: 10,
+//   },
+//   dropdownIcon: {
+//     fontSize: 22,
+//     color: '#002D62',
+//     position: 'absolute',
+//     right: 30,
+//     top: 34,
+//   },
+//   loadingContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: 'white',
+//   },
+//   loadingText: {
+//     color: '#000',
+//     fontSize: 16,
+//   },
+
+//   buttonRow: {
+//     top: 30,
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     width: width * 0.9,
+//     marginTop: 10,
+//   },
+
+//   smallButton: {
+//     backgroundColor: '#90C292',
+//     borderRadius: 10,
+//     paddingVertical: 15,
+//     paddingHorizontal: 20,
+//     alignItems: 'center',
+//     flex: 1,
+//     marginHorizontal: 5,
+//     shadowColor: '#000',
+//     shadowOffset: {width: 0, height: 2},
+//     shadowOpacity: 0.2,
+//     shadowRadius: 3,
+//     elevation: 5,
+//   },
+// });
+
+// export default VideoPreviewScreen;
+
+//.........................................................................
 import React, {useState, useEffect, useCallback} from 'react';
 import {
   StyleSheet,
@@ -255,6 +550,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  ScrollView,
 } from 'react-native';
 import {ip_adress} from './IP-config';
 import LinearGradient from 'react-native-linear-gradient';
@@ -268,8 +564,10 @@ const VideoPreviewScreen = ({navigation, route}) => {
   const {sessionId, coachId, videoFile: initialVideoFile, mode} = route.params;
   const [videoFile, setVideoFile] = useState(initialVideoFile || null);
   const [videoUri, setVideoUri] = useState(initialVideoFile?.uri || null);
+  const [processedFrames, setProcessedFrames] = useState([]);
+  const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Memoize handleSelectVideo to prevent unnecessary re-renders
   const handleSelectVideo = useCallback(async () => {
     try {
       const result = await launchImageLibrary({
@@ -302,22 +600,22 @@ const VideoPreviewScreen = ({navigation, route}) => {
     }
   }, [navigation]);
 
-  // Select video from gallery if mode is 'gallery'
   useEffect(() => {
     if (mode === 'gallery') {
       handleSelectVideo();
     }
   }, [mode, handleSelectVideo]);
 
-  // Upload video to backend
   const uploadVideo = async () => {
     if (!videoFile || !sessionId) {
       Alert.alert('Error', 'No video or session selected');
       return;
     }
 
+    setIsLoading(true);
+
     const formData = new FormData();
-    formData.append('video', {
+    formData.append('file', {
       uri: videoFile.uri,
       type: videoFile.type,
       name: videoFile.name,
@@ -325,7 +623,7 @@ const VideoPreviewScreen = ({navigation, route}) => {
     formData.append('session_id', sessionId);
 
     try {
-      const response = await fetch(`${ip_adress}/coach/upload-session-video`, {
+      const response = await fetch(`${ip_adress}/coach/process_video`, {
         method: 'POST',
         body: formData,
         headers: {
@@ -335,20 +633,66 @@ const VideoPreviewScreen = ({navigation, route}) => {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || 'Upload failed');
+        throw new Error(data.error || 'Processing failed');
       }
 
-      Alert.alert('Success', 'Video uploaded successfully', [
-        {
-          text: 'OK',
-          onPress: () => navigation.navigate('ViewArrangedSessions'),
-        },
-      ]);
+      setProcessedFrames(data.frames || []);
+      if (data.frames && data.frames.length > 0) {
+        setVideoUri(data.frames[0].frameUri);
+      }
     } catch (error) {
       console.error('Upload error:', error);
-      Alert.alert('Error', error.message || 'Failed to upload video');
+      Alert.alert('Error', error.message || 'Failed to process video');
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const renderResultTable = () => {
+    if (processedFrames.length === 0) return null;
+
+    const currentFrame = processedFrames[currentFrameIndex];
+    const angles = currentFrame.angles || {};
+
+    return (
+      <View style={styles.resultTable}>
+        <View style={styles.tableRow}>
+          <Text style={styles.tableHeader}>Body Part / Action</Text>
+          <Text style={styles.tableHeader}>Measured Angle (°)</Text>
+          <Text style={styles.tableHeader}>Ideal Range (°)</Text>
+          <Text style={styles.tableHeader}>Evaluation</Text>
+        </View>
+        {Object.keys(angles).map(part => {
+          const {measured, idealRange, isWithinRange} = angles[part];
+          return (
+            <View key={part} style={styles.tableRow}>
+              <Text style={styles.tableCell}>{part}</Text>
+              <Text style={styles.tableCell}>{measured}°</Text>
+              <Text
+                style={
+                  styles.tableCell
+                }>{`${idealRange[0]}-${idealRange[1]}°`}</Text>
+              <Text
+                style={[
+                  styles.tableCell,
+                  {color: isWithinRange ? 'green' : 'red'},
+                ]}>
+                {isWithinRange ? '✔️' : '❌'}
+              </Text>
+            </View>
+          );
+        })}
+      </View>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Processing Video...</Text>
+      </View>
+    );
+  }
 
   if (!videoUri) {
     return (
@@ -364,7 +708,6 @@ const VideoPreviewScreen = ({navigation, route}) => {
         colors={['#90C299', '#DCEDC1']}
         style={styles.gradientBackground}
       />
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButtonContainer}
@@ -374,32 +717,45 @@ const VideoPreviewScreen = ({navigation, route}) => {
         </TouchableOpacity>
         <Text style={styles.title}>Preview Video</Text>
       </View>
-
-      {/* Main Content */}
-      <View style={styles.menu}>
-        <Video
-          source={{uri: videoUri}}
-          style={styles.videoPreview}
-          controls
-          resizeMode="contain"
-          paused={false}
-        />
-        {/* <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => navigation.goBack()}>
-          <View style={styles.buttonContent}>
-            <Ionicons name="close" size={30} color="#000080" />
-            <Text style={styles.menuText}>Cancel</Text>
+      <ScrollView contentContainerStyle={styles.menu}>
+        {processedFrames.length > 0 ? (
+          <View style={styles.navigationContainer}>
+            <TouchableOpacity
+              style={styles.arrowButton}
+              onPress={() =>
+                setCurrentFrameIndex(prev => Math.max(prev - 1, 0))
+              }
+              disabled={currentFrameIndex === 0}>
+              <Text style={styles.arrowText}>{'<'}</Text>
+            </TouchableOpacity>
+            <Video
+              source={{uri: processedFrames[currentFrameIndex].frameUri}}
+              style={styles.videoPreview}
+              controls={false}
+              resizeMode="contain"
+              paused={true}
+            />
+            <TouchableOpacity
+              style={styles.arrowButton}
+              onPress={() =>
+                setCurrentFrameIndex(prev =>
+                  Math.min(prev + 1, processedFrames.length - 1),
+                )
+              }
+              disabled={currentFrameIndex === processedFrames.length - 1}>
+              <Text style={styles.arrowText}>{'>'}</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.dropdownIcon}>⋮</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} onPress={uploadVideo}>
-          <View style={styles.buttonContent}>
-            <Ionicons name="cloud-upload" size={30} color="#000080" />
-            <Text style={styles.menuText}>Upload</Text>
-          </View>
-          <Text style={styles.dropdownIcon}>⋮</Text>
-        </TouchableOpacity> */}
+        ) : (
+          <Video
+            source={{uri: videoUri}}
+            style={styles.videoPreview}
+            controls
+            resizeMode="contain"
+            paused={false}
+          />
+        )}
+        {processedFrames.length > 0 && renderResultTable()}
         <View style={styles.buttonRow}>
           <TouchableOpacity
             style={styles.smallButton}
@@ -409,7 +765,6 @@ const VideoPreviewScreen = ({navigation, route}) => {
               <Text style={styles.menuText}>Cancel</Text>
             </View>
           </TouchableOpacity>
-
           <TouchableOpacity style={styles.smallButton} onPress={uploadVideo}>
             <View style={styles.buttonContent}>
               <Ionicons name="cloud-upload" size={24} color="#000080" />
@@ -417,7 +772,14 @@ const VideoPreviewScreen = ({navigation, route}) => {
             </View>
           </TouchableOpacity>
         </View>
-      </View>
+        {processedFrames.length > 0 && (
+          <TouchableOpacity
+            style={styles.feedbackButton}
+            onPress={() => navigation.navigate('FeedbackScreen')}>
+            <Text style={styles.feedbackText}>View Feedback</Text>
+          </TouchableOpacity>
+        )}
+      </ScrollView>
     </View>
   );
 };
@@ -461,66 +823,65 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   menu: {
-    marginTop: 100, // Adjusted to fit the video preview above the buttons
-    padding: 50,
+    marginTop: 100,
+    padding: 20,
     alignItems: 'center',
   },
   videoPreview: {
     width: width * 0.9,
-    height: height * 0.4, // Adjusted height to fit within the layout
+    height: height * 0.4,
     borderRadius: 10,
     backgroundColor: '#000',
     marginBottom: 20,
   },
-  menuItem: {
-    backgroundColor: '#90C292',
-    borderRadius: 10,
-    padding: 25,
-    marginBottom: 35,
+  navigationContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 5,
-    position: 'relative',
-    width: width * 0.8, // Match the button width to RecordSessionScreen
-  },
-  buttonContent: {
-    alignItems: 'center',
-  },
-  menuText: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#000080',
-    marginTop: 10,
-  },
-  dropdownIcon: {
-    fontSize: 22,
-    color: '#002D62',
-    position: 'absolute',
-    right: 30,
-    top: 34,
-  },
-  loadingContainer: {
-    flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    position: 'relative',
+  },
+  arrowButton: {
+    padding: 10,
+    borderWidth: 2,
+    borderColor: '#90C292',
+    borderRadius: 20,
     backgroundColor: 'white',
+    marginHorizontal: 10,
   },
-  loadingText: {
-    color: '#000',
+  arrowText: {
+    fontSize: 18,
+    color: '#90C292',
+  },
+  resultTable: {
+    marginTop: 20,
+    backgroundColor: '#E6F2E6',
+    padding: 10,
+    borderRadius: 10,
+    width: width * 0.9,
+  },
+  tableHeader: {
+    fontWeight: 'bold',
     fontSize: 16,
+    color: '#000080',
+    flex: 1,
+    textAlign: 'center',
   },
-
+  tableRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 5,
+  },
+  tableCell: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 14,
+  },
   buttonRow: {
-    top: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: width * 0.9,
     marginTop: 10,
   },
-
   smallButton: {
     backgroundColor: '#90C292',
     borderRadius: 10,
@@ -534,6 +895,39 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 5,
+  },
+  buttonContent: {
+    alignItems: 'center',
+  },
+  menuText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#000080',
+    marginTop: 10,
+  },
+  feedbackButton: {
+    backgroundColor: '#90C292',
+    borderRadius: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    width: width * 0.9,
+    marginTop: 20,
+  },
+  feedbackText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  loadingText: {
+    color: '#000',
+    fontSize: 16,
   },
 });
 
