@@ -36,7 +36,7 @@ const PlayerDashboard = ({navigation}) => {
         {/* Performance Button */}
         <TouchableOpacity
           style={styles.menuItem}
-          onPress={() => navigation.navigate('Performance')}>
+          onPress={() => navigation.navigate('PlayerPerformanceScreen')}>
           <View style={styles.buttonContent}>
             <Image
               source={require('../CricketCoachingSystem/images/performance.png')}

@@ -152,7 +152,7 @@ import PerformanceScreen from './Contents/CricketCoachingSystem/C-PlayerPerforma
 import ShotDetailScreen from './Contents/CricketCoachingSystem/C-ShotByShot-DetailScreen';
 
 import ViewJoinedSessionScreen from './Contents/CricketCoachingSystem/P-ViewJoinedSessionScreen';
-
+import PlayerPerformanceScreen from './Contents/CricketCoachingSystem/P-PlayerPerformanceScreen';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -212,6 +212,10 @@ const App = () => {
         <Stack.Screen
           name="ViewJoinedSession"
           component={ViewJoinedSessionScreen}
+        />
+        <Stack.Screen
+          name="PlayerPerformanceScreen"
+          component={PlayerPerformanceScreen}
         />
 
         {/* 
